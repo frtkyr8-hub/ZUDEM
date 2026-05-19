@@ -301,11 +301,23 @@
   </div>
 
   <script>
-    const startDate = new Date("2026-01-13");
-    const today = new Date();
-    const diffTime = today - startDate;
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    document.getElementById("daysTogether").innerText = diffDays;
+    function updateLoveTime() {
+  const startDate = new Date("2026-01-13T00:00:00");
+  const now = new Date();
+
+  const diff = now - startDate;
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  const minutes = Math.floor((diff / (1000 * 60)) % 60);
+  const seconds = Math.floor((diff / 1000) % 60);
+
+  document.getElementById("daysTogether").innerHTML =
+    `${days} Gün ${hours} Saat ${minutes} Dakika ${seconds} Saniye`;
+}
+
+setInterval(updateLoveTime, 1000);
+updateLoveTime();
 
     document.addEventListener("click", () => {
       document.getElementById("music").play();
