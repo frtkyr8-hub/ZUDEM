@@ -4,135 +4,274 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Zudem'e Özel</title>
+  <meta name="theme-color" content="#ff4f81">
+
   <style>
     * { margin:0; padding:0; box-sizing:border-box; font-family: Arial, sans-serif; }
     html { scroll-behavior:smooth; }
     body {
       background: radial-gradient(circle at top, #ffafbd, #ffc3a0 35%, #2b1055 100%);
-      color: white;
-      overflow-x: hidden;
-      min-height: 100vh;
+      color:white;
+      overflow-x:hidden;
+      min-height:100vh;
     }
     body::before {
-      content:""; position:fixed; inset:0; pointer-events:none; z-index:-1;
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:-1;
       background-image: radial-gradient(white 1px, transparent 1px), radial-gradient(white 1px, transparent 1px);
-      background-size: 45px 45px, 80px 80px;
-      background-position: 0 0, 20px 30px;
-      opacity:.25; animation: stars 18s linear infinite;
+      background-size:45px 45px, 80px 80px;
+      background-position:0 0, 20px 30px;
+      opacity:.25;
+      animation:stars 18s linear infinite;
     }
-    @keyframes stars { to { transform: translateY(-120px); } }
+    @keyframes stars { to { transform:translateY(-120px); } }
 
-    .login-screen { height:100vh; display:flex; justify-content:center; align-items:center; flex-direction:column; text-align:center; padding:20px; }
-    .login-box, .glass { background:rgba(255,255,255,.13); padding:35px; border-radius:28px; box-shadow:0 0 30px rgba(0,0,0,.25); backdrop-filter:blur(12px); }
-    .login-box { width:100%; max-width:420px; }
+    .hidden { display:none !important; }
+    .login-screen {
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:20px;
+    }
+    .login-box, .glass, .message-box, .secret-box, .timeline {
+      background:rgba(255,255,255,.13);
+      border-radius:28px;
+      box-shadow:0 0 30px rgba(0,0,0,.25);
+      backdrop-filter:blur(12px);
+    }
+    .login-box { width:100%; max-width:420px; padding:35px; }
     .login-box h1 { margin-bottom:18px; font-size:2rem; }
-    .login-box input { width:100%; padding:15px; border:none; border-radius:16px; margin-top:15px; outline:none; font-size:1rem; }
-    .login-box button, button.magic { margin-top:20px; padding:15px 28px; border:none; border-radius:18px; background:white; color:#ff4f81; font-size:1rem; cursor:pointer; font-weight:bold; transition:.3s; }
-    .login-box button:hover, button.magic:hover { transform:scale(1.05); }
-    .hidden { display:none; }
-    .main-site { padding:28px; text-align:center; animation:fadeIn 1s ease; }
-    .hero { margin-top:45px; }
-    .hero h1 { font-size:3rem; margin-bottom:20px; text-shadow:0 0 18px rgba(255,255,255,.35); }
+    input {
+      width:100%;
+      padding:15px;
+      border:none;
+      border-radius:16px;
+      margin-top:15px;
+      outline:none;
+      font-size:1rem;
+    }
+    button, .magic {
+      margin-top:18px;
+      padding:14px 24px;
+      border:none;
+      border-radius:18px;
+      background:white;
+      color:#ff4f81;
+      font-size:1rem;
+      cursor:pointer;
+      font-weight:bold;
+      transition:.25s;
+    }
+    button:hover, .magic:hover { transform:scale(1.04); }
+
+    .journey-screen {
+      position:fixed;
+      inset:0;
+      background:radial-gradient(circle,#000,#2b1055 70%);
+      z-index:200000;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      text-align:center;
+      color:white;
+      transition:1s;
+      padding:20px;
+    }
+    .journey-screen.hide { opacity:0; visibility:hidden; }
+    .journey-heart { font-size:5rem; animation:pulse 1.4s infinite; filter:drop-shadow(0 0 25px #ff4f81); }
+
+    .call-screen {
+      position:fixed;
+      inset:0;
+      background:linear-gradient(135deg,#111,#ff4f81);
+      z-index:100000;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      text-align:center;
+      padding:20px;
+    }
+    .call-screen.show { display:flex; }
+    .call-avatar {
+      width:130px;
+      height:130px;
+      border-radius:50%;
+      background:white;
+      color:#ff4f81;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:4rem;
+      margin-bottom:25px;
+      animation:pulse 1.2s infinite;
+    }
+
+    .main-site { padding:25px; text-align:center; animation:fadeIn 1s ease; }
+    .hero { margin-top:35px; }
+    .hero h1 { font-size:3rem; margin-bottom:18px; text-shadow:0 0 18px rgba(255,255,255,.35); }
     .hero p { max-width:760px; margin:auto; line-height:1.85; font-size:1.18rem; }
-
     .section-title { margin-top:70px; font-size:2rem; }
-    .gallery { margin-top:30px; display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:18px; }
-    .gallery img { width:100%; height:290px; object-fit:cover; border-radius:24px; transition:.4s; box-shadow:0 0 22px rgba(0,0,0,.25); }
-    .gallery img:hover { transform:scale(1.04) rotate(1deg); }
 
-    .slider { margin:35px auto 0; max-width:820px; height:470px; border-radius:32px; overflow:hidden; box-shadow:0 0 35px rgba(0,0,0,.35); position:relative; }
-    .slider img { width:100%; height:100%; object-fit:cover; position:absolute; inset:0; opacity:0; transition:1s; }
-    .slider img.active { opacity:1; transform:scale(1.02); }
-    .slider-caption { position:absolute; left:0; right:0; bottom:0; padding:22px; background:linear-gradient(transparent,rgba(0,0,0,.65)); font-size:1.2rem; }
+    #countdown {
+      position:fixed;
+      top:15px;
+      right:15px;
+      background:rgba(255,255,255,.18);
+      padding:12px 16px;
+      border-radius:18px;
+      font-weight:bold;
+      backdrop-filter:blur(10px);
+      z-index:999;
+      font-size:.95rem;
+    }
 
-    .message-box, #letterBox, .timeline, .secret-box { margin-top:35px; background:rgba(255,255,255,.13); padding:32px; border-radius:28px; max-width:880px; margin-left:auto; margin-right:auto; line-height:2; font-size:1.12rem; backdrop-filter:blur(10px); }
-    .timeline-item { margin:18px 0; padding:18px; border-left:4px solid white; text-align:left; background:rgba(255,255,255,.08); border-radius:16px; }
-    .timeline-item b { color:#fff0f6; }
+    .video-box {
+      width:100%;
+      max-width:900px;
+      margin:30px auto 0;
+      border-radius:30px;
+      overflow:hidden;
+      background:rgba(0,0,0,.25);
+      box-shadow:0 0 35px rgba(0,0,0,.35);
+    }
+    .video-box video {
+      width:100%;
+      display:block;
+      border-radius:30px;
+      max-height:520px;
+      object-fit:cover;
+    }
 
-    .spotify-card { max-width:430px; margin:35px auto; padding:22px; border-radius:28px; background:rgba(0,0,0,.25); backdrop-filter:blur(10px); box-shadow:0 0 25px rgba(0,0,0,.25); }
+    .gallery {
+      margin:30px auto 0;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:18px;
+      max-width:1000px;
+    }
+    .gallery img {
+      width:100%;
+      height:290px;
+      object-fit:cover;
+      border-radius:24px;
+      box-shadow:0 0 22px rgba(0,0,0,.25);
+      transition:.35s;
+    }
+    .gallery img:hover { transform:scale(1.03); }
+
+    .spotify-card {
+      max-width:430px;
+      margin:35px auto;
+      padding:22px;
+      border-radius:28px;
+      background:rgba(0,0,0,.25);
+      backdrop-filter:blur(10px);
+      box-shadow:0 0 25px rgba(0,0,0,.25);
+    }
     .music-cover { width:120px; height:120px; border-radius:24px; object-fit:cover; box-shadow:0 0 18px rgba(255,255,255,.25); }
     .bar { height:8px; background:rgba(255,255,255,.3); border-radius:20px; overflow:hidden; margin-top:18px; }
     .bar span { display:block; height:100%; width:30%; background:white; border-radius:20px; animation:musicBar 6s infinite linear; }
-    @keyframes musicBar { 0%{width:5%} 50%{width:80%} 100%{width:5%} }
 
-    .cake { font-size:5.5rem; cursor:pointer; animation:pulse 1.5s infinite; display:inline-block; }
-    .candle-msg { margin-top:12px; font-size:1.2rem; }
-    .footer { margin-top:70px; padding-bottom:40px; font-size:1rem; opacity:.95; }
-    .heart { position:fixed; color:white; font-size:20px; animation:floatUp 6s linear infinite; opacity:.75; pointer-events:none; z-index:5; }
-    .floating-note { position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); background:white; color:#ff4f81; padding:25px 30px; border-radius:25px; box-shadow:0 0 35px rgba(0,0,0,.35); z-index:99999; max-width:330px; font-weight:bold; animation:popNote 2.8s forwards; }
+    .message-box, .secret-box, .timeline {
+      margin:35px auto 0;
+      padding:30px;
+      max-width:880px;
+      line-height:2;
+      font-size:1.1rem;
+    }
+    .timeline-item {
+      margin:18px 0;
+      padding:18px;
+      border-left:4px solid white;
+      text-align:left;
+      background:rgba(255,255,255,.08);
+      border-radius:16px;
+    }
 
-    @keyframes popNote { 0%{opacity:0; transform:translate(-50%,-50%) scale(.7)} 15%{opacity:1; transform:translate(-50%,-50%) scale(1)} 85%{opacity:1} 100%{opacity:0; transform:translate(-50%,-60%) scale(.9)} }
-    @keyframes floatUp { from{transform:translateY(100vh) scale(.5); opacity:1} to{transform:translateY(-10vh) scale(1.5); opacity:0} }
-    @keyframes pulse { 0%{transform:scale(1)} 50%{transform:scale(1.1)} 100%{transform:scale(1)} }
-    @keyframes fadeOut { to{opacity:0; visibility:hidden} }
-    @keyframes cinemaText { 0%{opacity:0;letter-spacing:20px;transform:scale(.8)} 100%{opacity:1;letter-spacing:1px;transform:scale(1)} }
-    .trail { position:fixed; pointer-events:none; z-index:9999; animation:trailFade 1s forwards; }
-    @keyframes trailFade { to{opacity:0; transform:translateY(-20px) scale(.4)} }
     .polaroid-wall { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:25px; max-width:1000px; margin:35px auto; }
     .polaroid { background:white; color:#ff4f81; padding:12px 12px 35px; border-radius:8px; box-shadow:0 12px 30px rgba(0,0,0,.3); transform:rotate(var(--r)); transition:.3s; }
-    .polaroid:hover { transform:rotate(0deg) scale(1.06); }
+    .polaroid:hover { transform:rotate(0deg) scale(1.05); }
     .polaroid img { width:100%; height:210px; object-fit:cover; border-radius:5px; }
-    .book { max-width:760px; margin:35px auto; perspective:1200px; }
-    .book-page { background:rgba(255,255,255,.18); padding:35px; border-radius:25px; line-height:2; min-height:230px; box-shadow:0 0 30px rgba(0,0,0,.25); transform-style:preserve-3d; animation:pageGlow 3s infinite alternate; }
-    @keyframes pageGlow { from{box-shadow:0 0 18px rgba(255,255,255,.18)} to{box-shadow:0 0 38px rgba(255,255,255,.35)} }
+
+    .book { max-width:760px; margin:35px auto; }
+    .book-page { background:rgba(255,255,255,.18); padding:35px; border-radius:25px; line-height:2; min-height:230px; box-shadow:0 0 30px rgba(0,0,0,.25); }
+
     .game-area { position:relative; height:330px; max-width:700px; margin:35px auto; border-radius:30px; overflow:hidden; background:rgba(255,255,255,.12); box-shadow:0 0 25px rgba(0,0,0,.25); }
     .catch-heart { position:absolute; font-size:2rem; cursor:pointer; user-select:none; animation:dropHeart 4s linear forwards; }
-    @keyframes dropHeart { from{top:-40px} to{top:360px} }
-    .locked { filter:blur(4px); user-select:none; }
-    .moon { position:fixed; top:70px; left:25px; font-size:3rem; opacity:.65; animation:pulse 3s infinite; z-index:1; }
-    .infinite-card { margin:25px auto; max-width:800px; padding:28px; border-radius:28px; background:rgba(255,255,255,.12); line-height:1.8; backdrop-filter:blur(10px); }
-    .confetti { position:fixed; top:-20px; width:10px; height:14px; background:white; z-index:99999; animation:confettiFall 4s linear forwards; }
-    @keyframes confettiFall { to{ transform:translateY(110vh) rotate(720deg); opacity:0; } }
-    .rain-mode::after { content:""; position:fixed; inset:0; pointer-events:none; z-index:999; background:linear-gradient(120deg,rgba(255,255,255,.14),transparent 35%), repeating-linear-gradient(100deg,rgba(255,255,255,.25) 0 2px,transparent 2px 18px); opacity:.25; animation:rainMove .6s linear infinite; backdrop-filter:blur(1px); }
-    @keyframes rainMove { to{ background-position:0 30px, 0 45px; } }
-    .love-star { position:fixed; z-index:99999; background:white; color:#ff4f81; padding:12px 16px; border-radius:20px; box-shadow:0 0 25px rgba(255,255,255,.5); animation:starPop 4s forwards; font-weight:bold; max-width:230px; }
-    @keyframes starPop { 0%{opacity:0; transform:scale(.5)} 15%{opacity:1; transform:scale(1)} 85%{opacity:1} 100%{opacity:0; transform:translateY(-50px) scale(.8)} }
+
     .future-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:18px; max-width:950px; margin:35px auto; }
     .future-card { padding:25px; border-radius:28px; background:rgba(255,255,255,.14); min-height:150px; display:flex; align-items:center; justify-content:center; flex-direction:column; box-shadow:0 0 25px rgba(0,0,0,.18); transition:.3s; }
     .future-card:hover { transform:translateY(-8px) scale(1.03); }
-    .big-heart-touch { font-size:6rem; cursor:pointer; display:inline-block; animation:pulse 1.2s infinite; filter:drop-shadow(0 0 20px rgba(255,255,255,.55)); }
+
     .credits { height:300px; overflow:hidden; max-width:800px; margin:35px auto; background:rgba(0,0,0,.35); border-radius:30px; position:relative; }
     .credits-inner { position:absolute; width:100%; bottom:-420px; animation:creditsRoll 18s linear infinite; line-height:2.2; font-size:1.2rem; }
-    @keyframes creditsRoll { to{ bottom:330px; } }
-    .gift-box { font-size:6rem; cursor:pointer; animation:giftShake 1.5s infinite; display:inline-block; }
-    @keyframes giftShake { 0%,100%{transform:rotate(0)} 25%{transform:rotate(4deg)} 75%{transform:rotate(-4deg)} }
-    .call-screen { position:fixed; inset:0; background:linear-gradient(135deg,#111,#ff4f81); z-index:100000; display:none; align-items:center; justify-content:center; flex-direction:column; text-align:center; }
-    .call-screen.show { display:flex; }
-    .call-avatar { width:130px; height:130px; border-radius:50%; background:white; color:#ff4f81; display:flex; align-items:center; justify-content:center; font-size:4rem; margin-bottom:25px; animation:pulse 1.2s infinite; }
-    .mood-btns { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:20px; }
-    .vhs-mode { filter:contrast(1.15) saturate(.85); }
-    .vhs-mode::before { content:""; position:fixed; inset:0; background:repeating-linear-gradient(0deg,rgba(255,255,255,.04) 0 2px,transparent 2px 6px); pointer-events:none; z-index:9999; }
-    .portal { width:220px; height:220px; margin:25px auto; border-radius:50%; background:conic-gradient(from 0deg,#fff,#ff4f81,#7b2ff7,#fff); animation:spin 2.5s linear infinite; box-shadow:0 0 45px rgba(255,255,255,.55); cursor:pointer; }
-    @keyframes spin { to{transform:rotate(360deg)} }
-    .touch-spark { position:fixed; pointer-events:none; z-index:99999; animation:sparkOut 1.5s forwards; font-weight:bold; color:white; text-shadow:0 0 12px #ff4f81; }
-    @keyframes sparkOut { to{opacity:0; transform:translateY(-35px) scale(1.4)} }
-    .journey-screen { position:fixed; inset:0; background:radial-gradient(circle,#000,#2b1055 70%); z-index:200000; display:flex; align-items:center; justify-content:center; flex-direction:column; text-align:center; color:white; transition:1s; }
-    .journey-screen.hide { opacity:0; visibility:hidden; }
-    .journey-heart { font-size:6rem; animation:heartbeat 1.2s infinite; filter:drop-shadow(0 0 25px #ff4f81); }
-    @keyframes heartbeat { 0%{transform:scale(1)} 25%{transform:scale(1.15)} 40%{transform:scale(1)} 60%{transform:scale(1.12)} 100%{transform:scale(1)} }
-     50%{transform:scale(1.01)} 100%{transform:scale(1)} }
-    .ending-universe { margin:80px auto; max-width:850px; padding:50px 30px; border-radius:35px; background:rgba(255,255,255,.12); text-align:center; box-shadow:0 0 45px rgba(255,255,255,.18); }
-    .ending-stars { font-size:2rem; animation:floatStars 4s infinite alternate; }
-    @keyframes floatStars { from{transform:translateY(0)} to{transform:translateY(-15px)} }
-    @keyframes fadeIn { from{opacity:0; transform:translateY(20px)} to{opacity:1; transform:translateY(0)} }
 
-    @media(max-width:600px){ .hero h1{font-size:2.2rem} .slider{height:360px} .main-site{padding:18px} #countdown{left:10px!important; right:10px!important; top:10px!important; font-size:.85rem} }
+    .gift-box, .cake, .big-heart-touch { font-size:5.5rem; cursor:pointer; display:inline-block; animation:pulse 1.6s infinite; }
+    .portal { width:200px; height:200px; margin:25px auto; border-radius:50%; background:conic-gradient(from 0deg,#fff,#ff4f81,#7b2ff7,#fff); animation:spin 2.5s linear infinite; box-shadow:0 0 45px rgba(255,255,255,.55); cursor:pointer; }
+
+    .rain-mode::after {
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:999;
+      background:repeating-linear-gradient(100deg,rgba(255,255,255,.25) 0 2px,transparent 2px 18px);
+      opacity:.22;
+      animation:rainMove .6s linear infinite;
+    }
+
+    .locked { filter:blur(4px); user-select:none; }
+    .heart, .trail, .touch-spark, .floating-note, .confetti, .love-star { position:fixed; pointer-events:none; z-index:99999; }
+    .heart { color:white; font-size:20px; animation:floatUp 6s linear infinite; opacity:.75; z-index:5; }
+    .trail { animation:trailFade 1s forwards; }
+    .touch-spark { animation:sparkOut 1.5s forwards; color:white; text-shadow:0 0 12px #ff4f81; }
+    .floating-note { left:50%; top:50%; transform:translate(-50%,-50%); background:white; color:#ff4f81; padding:25px 30px; border-radius:25px; box-shadow:0 0 35px rgba(0,0,0,.35); max-width:330px; font-weight:bold; animation:popNote 2.8s forwards; }
+    .confetti { top:-20px; width:10px; height:14px; background:white; animation:confettiFall 4s linear forwards; }
+    .love-star { background:white; color:#ff4f81; padding:12px 16px; border-radius:20px; box-shadow:0 0 25px rgba(255,255,255,.5); animation:starPop 4s forwards; font-weight:bold; max-width:230px; }
+
+    .ending-universe { margin:80px auto; max-width:850px; padding:50px 30px; border-radius:35px; background:rgba(255,255,255,.12); text-align:center; box-shadow:0 0 45px rgba(255,255,255,.18); }
+
+    @keyframes fadeIn { from{opacity:0; transform:translateY(20px)} to{opacity:1; transform:translateY(0)} }
+    @keyframes fadeOut { to{opacity:0; visibility:hidden} }
+    @keyframes pulse { 0%{transform:scale(1)} 50%{transform:scale(1.08)} 100%{transform:scale(1)} }
+    @keyframes floatUp { from{transform:translateY(100vh) scale(.5); opacity:1} to{transform:translateY(-10vh) scale(1.5); opacity:0} }
+    @keyframes popNote { 0%{opacity:0; transform:translate(-50%,-50%) scale(.7)} 15%{opacity:1; transform:translate(-50%,-50%) scale(1)} 85%{opacity:1} 100%{opacity:0; transform:translate(-50%,-60%) scale(.9)} }
+    @keyframes trailFade { to{opacity:0; transform:translateY(-20px) scale(.4)} }
+    @keyframes sparkOut { to{opacity:0; transform:translateY(-35px) scale(1.4)} }
+    @keyframes musicBar { 0%{width:5%} 50%{width:80%} 100%{width:5%} }
+    @keyframes dropHeart { from{top:-40px} to{top:360px} }
+    @keyframes creditsRoll { to{ bottom:330px; } }
+    @keyframes spin { to{transform:rotate(360deg)} }
+    @keyframes rainMove { to{ background-position:0 45px; } }
+    @keyframes confettiFall { to{ transform:translateY(110vh) rotate(720deg); opacity:0; } }
+    @keyframes starPop { 0%{opacity:0; transform:scale(.5)} 15%{opacity:1; transform:scale(1)} 85%{opacity:1} 100%{opacity:0; transform:translateY(-50px) scale(.8)} }
+
+    @media(max-width:600px) {
+      .main-site { padding:16px; }
+      .hero h1 { font-size:2.2rem; }
+      .section-title { font-size:1.55rem; }
+      .message-box, .secret-box, .timeline { padding:22px; font-size:1rem; }
+      .video-box video { max-height:none; }
+      #countdown { left:10px; right:10px; top:10px; font-size:.8rem; }
+      .journey-heart { font-size:4rem; }
+      .journey-screen h1 { font-size:2rem !important; }
+    }
   </style>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#ff4f81">
 </head>
 <body>
-  <div class="journey-screen" id="journeyScreen">
-    <div class="journey-heart">❤️</div>
-    <h1 style="margin-top:25px;font-size:3rem;">Hazır mısın?</h1>
-    <p style="margin-top:20px;max-width:600px;line-height:1.8;font-size:1.2rem;">Şimdi Fırat’ın kalbinin içinde küçük bir yolculuğa çıkacaksın...</p>
-    <button class="magic" onclick="startJourney()">Yolculuğu Başlat ✨</button>
-  </div>
+
   <div class="call-screen" id="callScreen">
     <div class="call-avatar">F</div>
     <h1>Fırat arıyor...</h1>
     <p style="margin-top:15px;font-size:1.2rem;max-width:520px;line-height:1.8;">Sana söylemek istediği tek şey var: Seni çok seviyor ve iyi ki hayatındasın. ❤️</p>
-    <button class="magic" onclick="endCall()">Kapat ❤️</button>
+    <button onclick="endCall()">Kapat ❤️</button>
   </div>
 
   <div class="login-screen" id="loginScreen">
@@ -144,15 +283,17 @@
     </div>
   </div>
 
-  <div class="moon" id="moon">🌙</div>
-  <div class="main-site hidden" id="mainSite">
-    <div id="intro" style="position:fixed;inset:0;background:radial-gradient(circle,#ff9a9e,#2b1055);display:flex;justify-content:center;align-items:center;z-index:9999;flex-direction:column;text-align:center;animation:fadeOut 2s ease 7s forwards;overflow:hidden;">
-    <div style="font-size:1.2rem;letter-spacing:3px;opacity:.9;animation:fadeIn 1s ease;">BİR HİKAYE VARDI...</div>
-    <h1 style="font-size:4rem;margin-top:25px;animation:cinemaText 3s ease;">Fırat ❤️ Zudem</h1>
-    <p style="margin-top:20px;font-size:1.3rem;max-width:650px;line-height:1.8;animation:fadeIn 4s ease;">Bu sadece bir site değil, sana olan sevgimin küçük bir evreni...</p>
+  <div class="journey-screen hidden" id="journeyScreen">
+    <div class="journey-heart">❤️</div>
+    <h1 style="margin-top:25px;font-size:3rem;">Hazır mısın?</h1>
+    <p style="margin-top:20px;max-width:600px;line-height:1.8;font-size:1.2rem;">Şimdi Fırat’ın kalbinin içinde küçük bir yolculuğa çıkacaksın...</p>
+    <button onclick="startJourney()">Yolculuğu Başlat ✨</button>
   </div>
 
-  <div class="hero">
+  <div class="main-site hidden" id="mainSite">
+    <div id="countdown">❤️ Birlikte geçen süre: <span id="daysTogether"></span></div>
+
+    <div class="hero">
       <h1>İyi ki Doğdun Aşkım ❤️</h1>
       <p>
         Hayatıma girdiğin günden beri her şey daha güzel oldu.
@@ -161,34 +302,15 @@
       </p>
     </div>
 
-    <div style="margin-top:50px;font-size:1.3rem;font-weight:bold;">
-      ⏳ Seninle geçen her saniye benim için bir ömür gibi güzel...
+    <h2 class="section-title">🎥 Bizim Videomuz</h2>
+    <div class="video-box">
+      <video controls playsinline preload="metadata">
+        <source src="video1.mp4" type="video/mp4">
+        Tarayıcınız videoyu desteklemiyor.
+      </video>
     </div>
 
     <h2 class="section-title">📸 Mutlu Olduğun Anlar</h2>
-    <div class="slider">
-      <div class="slider">
-
-  <video
-    controls
-    autoplay
-    muted
-    loop
-    playsinline
-    preload="auto"
-    style="
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      border-radius:32px;
-    ">
-
-    <source src="video1.mp4" type="video/mp4">
-
-  </video>
-
-</div>
-
     <div class="gallery">
       <img src="foto1.jpg" alt="Fotoğraf 1">
       <img src="foto2.jpg" alt="Fotoğraf 2">
@@ -196,21 +318,18 @@
       <img src="foto4.jpg" alt="Fotoğraf 4">
     </div>
 
-    <div style="display:none;">
-      <img class="slide active" src="foto1.jpg" alt="Bizim fotoğrafımız 1">
-      <img class="slide" src="foto2.jpg" alt="Bizim fotoğrafımız 2">
-      <img class="slide" src="foto3.jpg" alt="Bizim fotoğrafımız 3">
-      <img class="slide" src="foto4.jpg" alt="Bizim fotoğrafımız 4">
-      </div>
-
     <h2 class="section-title">🎵 Bizim Şarkımız</h2>
     <div class="spotify-card">
       <img class="music-cover" src="foto1.jpg" alt="Şarkı kapağı">
       <h3 style="margin-top:15px;">Fırat & Zudem</h3>
       <p>Bizim hikayemizin melodisi...</p>
       <div class="bar"><span></span></div>
-      <button class="magic" onclick="toggleMusic()">▶️ Müziği Aç / Kapat</button>
+      <button onclick="toggleMusic()">▶️ Müziği Aç / Kapat</button>
     </div>
+
+    <audio id="music" loop>
+      <source src="muzik.mp3" type="audio/mpeg">
+    </audio>
 
     <h2 class="section-title">🕰️ Bizim Hikayemiz</h2>
     <div class="timeline">
@@ -220,13 +339,8 @@
       <div class="timeline-item"><b>Bugün:</b> Senin doğum günün ve sana olan sevgimin küçük bir kanıtı.</div>
     </div>
 
-    <div style="margin-top:60px;">
-      <button onclick="showLetter()" style="padding:15px 30px;border:none;border-radius:20px;background:white;color:#ff4f81;font-size:1rem;font-weight:bold;cursor:pointer;">
-        💌 Sana Bir Mektubum Var
-      </button>
-    </div>
-
-    <div id="letterBox" style="display:none;margin-top:30px;background:rgba(255,255,255,0.12);padding:30px;border-radius:25px;max-width:800px;margin-left:auto;margin-right:auto;line-height:2;font-size:1.1rem;">
+    <button onclick="showLetter()">💌 Sana Bir Mektubum Var</button>
+    <div id="letterBox" class="message-box hidden">
       Bazen sadece seni düşünmek bile yüzümü gülümsetmeye yetiyor.
       Hayatımın en güzel anıları seninle oluştu.
       Sen benim huzurumsun, mutluluğumsun, en güzel tesadüfümsün.
@@ -246,13 +360,13 @@
     <h2 class="section-title">🔐 Gizli Sürpriz Bölümü</h2>
     <div class="secret-box">
       <p>Bu bölüm sadece sana özel. Kalbe dokun, her seferinde farklı bir mesaj çıksın.</p>
-      <button class="magic" onclick="randomLoveMessage()">❤️ Gizli Mesajı Aç</button>
+      <button onclick="randomLoveMessage()">❤️ Gizli Mesajı Aç</button>
     </div>
 
     <h2 class="section-title">🎂 Doğum Günü Sürprizi</h2>
-    <div style="margin-top:25px;">
+    <div class="secret-box">
       <div onclick="blowCake()" class="cake" id="cake">🎂</div>
-      <p class="candle-msg" id="cakeMsg">Pastaya dokun ve dileğini tut 🎉</p>
+      <p id="cakeMsg">Pastaya dokun ve dileğini tut 🎉</p>
     </div>
 
     <h2 class="section-title">📸 Polaroid Anı Duvarı</h2>
@@ -269,7 +383,7 @@
         <h3>Sayfa 1</h3>
         <p>Bir gün hayatıma girdin ve ben o günden sonra bazı şeylerin gerçekten kader olduğuna inandım.</p>
       </div>
-      <button class="magic" onclick="nextBookPage()">Sayfayı Çevir 📖</button>
+      <button onclick="nextBookPage()">Sayfayı Çevir 📖</button>
     </div>
 
     <h2 class="section-title">🎮 Kalbi Yakala Oyunu</h2>
@@ -280,46 +394,37 @@
     <h2 class="section-title">🔒 Gece Yarısı Mesajı</h2>
     <div class="secret-box">
       <p id="lockedMsg" class="locked">Bugün saat 00:00’dan sonra açılacak özel mesaj: Seni düşündüğüm her saniye...</p>
-      <button class="magic" onclick="unlockMidnightMessage()">Mesajı Kontrol Et</button>
+      <button onclick="unlockMidnightMessage()">Mesajı Kontrol Et</button>
     </div>
 
     <h2 class="section-title">🫶 Bugün Seni Neden Seviyorum?</h2>
     <div class="secret-box">
       <p id="reasonText">Butona bas, kalbimden bir sebep gelsin.</p>
-      <button class="magic" onclick="showReason()">Sebep Göster ❤️</button>
+      <button onclick="showReason()">Sebep Göster ❤️</button>
     </div>
-
-    <h2 class="section-title">♾️ Sonsuz Sürpriz Akışı</h2>
-    <div id="infiniteLove">
-      <div class="infinite-card">Şu anda bu satırları okurken bile seni düşünen biri var: ben. ❤️</div>
-    </div>
-    <button class="magic" onclick="addInfiniteCard()">Yeni Sürpriz Aç ✨</button>
 
     <h2 class="section-title">🤖 Zudem AI</h2>
     <div class="secret-box" style="max-width:760px;">
       <p style="margin-bottom:15px;">Bana bir şey sor. Mesela: “Fırat beni neden seviyor?” ❤️</p>
       <div id="aiChat" style="height:260px;overflow-y:auto;background:rgba(0,0,0,.18);border-radius:22px;padding:18px;text-align:left;line-height:1.7;"></div>
-      <div style="display:flex;gap:10px;margin-top:15px;flex-wrap:wrap;">
-        <input id="aiInput" placeholder="Zudem AI'ye yaz..." style="flex:1;min-width:210px;padding:14px;border:none;border-radius:18px;outline:none;font-size:1rem;">
-        <button class="magic" onclick="askZudemAI()" style="margin-top:0;">Gönder 💬</button>
-      </div>
-      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
-        <button class="magic" onclick="quickAsk('Fırat beni neden seviyor?')" style="padding:10px 14px;margin-top:0;">Neden seviyor?</button>
-        <button class="magic" onclick="quickAsk('Bana güzel bir mesaj yaz')" style="padding:10px 14px;margin-top:0;">Mesaj yaz</button>
-        <button class="magic" onclick="quickAsk('Bugün benim için ne söylersin?')" style="padding:10px 14px;margin-top:0;">Bugün?</button>
-      </div>
+      <input id="aiInput" placeholder="Zudem AI'ye yaz...">
+      <button onclick="askZudemAI()">Gönder 💬</button>
+      <br>
+      <button onclick="quickAsk('Fırat beni neden seviyor?')">Neden seviyor?</button>
+      <button onclick="quickAsk('Bana güzel bir mesaj yaz')">Mesaj yaz</button>
+      <button onclick="quickAsk('Bugün mutsuzum')">Mutsuzum</button>
     </div>
 
     <h2 class="section-title">🌠 Seni Sevme Sebeplerim Evreni</h2>
     <div class="secret-box">
       <p>Butona basınca etrafa seni sevme sebeplerim yayılır.</p>
-      <button class="magic" onclick="loveStars()">Evreni Aç 🌌</button>
+      <button onclick="loveStars()">Evreni Aç 🌌</button>
     </div>
 
     <h2 class="section-title">🌧️ Yağmurlu Cam Modu</h2>
     <div class="secret-box">
       <p>Romantik yağmur efekti aç/kapat.</p>
-      <button class="magic" onclick="toggleRain()">Yağmur Modu 🌧️</button>
+      <button onclick="toggleRain()">Yağmur Modu 🌧️</button>
     </div>
 
     <h2 class="section-title">🫶 Kalbime Dokun</h2>
@@ -350,12 +455,6 @@
       </div>
     </div>
 
-    <h2 class="section-title">🎆 Doğum Günü Patlaması</h2>
-    <div class="secret-box">
-      <p>Bir kez daha kutlamak için konfeti patlat.</p>
-      <button class="magic" onclick="confettiBurst()">Konfeti Patlat 🎉</button>
-    </div>
-
     <h2 class="section-title">🎁 Sanal Hediye Kutusu</h2>
     <div class="secret-box">
       <div class="gift-box" onclick="openGift()">🎁</div>
@@ -365,7 +464,7 @@
     <h2 class="section-title">📞 Fırat’tan Gelen Arama</h2>
     <div class="secret-box">
       <p>Butona basınca sinematik arama ekranı açılır.</p>
-      <button class="magic" onclick="startCall()">Fırat Arıyor 📞</button>
+      <button onclick="startCall()">Fırat Arıyor 📞</button>
     </div>
 
     <h2 class="section-title">🪐 Paralel Evren Modu</h2>
@@ -378,54 +477,40 @@
     <h2 class="section-title">🎭 Ruh Hali Modu</h2>
     <div class="secret-box">
       <p>Site ruh haline göre değişsin.</p>
-      <div class="mood-btns">
-        <button class="magic" onclick="setMood('romantic')">Romantik 💖</button>
-        <button class="magic" onclick="setMood('calm')">Sakin 🌙</button>
-        <button class="magic" onclick="setMood('fun')">Eğlenceli 🎉</button>
-        <button class="magic" onclick="setMood('retro')">Retro 🎥</button>
-      </div>
+      <button onclick="setMood('romantic')">Romantik 💖</button>
+      <button onclick="setMood('calm')">Sakin 🌙</button>
+      <button onclick="setMood('fun')">Eğlenceli 🎉</button>
+      <button onclick="setMood('retro')">Retro 🎥</button>
     </div>
 
     <h2 class="section-title">💍 Future Vision</h2>
     <div class="secret-box">
       <p id="futureVisionText">Gelecekten romantik bir sahne görmek için bas.</p>
-      <button class="magic" onclick="futureVision()">Geleceği Göster ✨</button>
+      <button onclick="futureVision()">Geleceği Göster ✨</button>
     </div>
 
     <h2 class="section-title">🧬 Ya Seninle Tanışmasaydım?</h2>
     <div class="secret-box">
       <p id="noMeetText">Bu sorunun cevabı her seferinde kalpten gelir.</p>
-      <button class="magic" onclick="noMeetStory()">Hikayeyi Yaz 🥹</button>
+      <button onclick="noMeetStory()">Hikayeyi Yaz 🥹</button>
     </div>
 
-    <h2 class="section-title">♾️ Sonsuz Hikaye 2.0</h2>
-    <div class="secret-box">
-      <p>Aşağı kaydırdıkça site yeni sürprizler üretir.</p>
-      <button class="magic" onclick="addInfiniteScene()">Yeni Sahne Aç 🎬</button>
+    <h2 class="section-title">♾️ Sonsuz Sürpriz Akışı</h2>
+    <div id="infiniteLove">
+      <div class="message-box">Şu anda bu satırları okurken bile seni düşünen biri var: ben. ❤️</div>
     </div>
-
-    <h2 class="section-title">📱 Küçük Not</h2>
-    <div class="message-box">
-      Bu siteyi telefonunun ana ekranına eklersen uygulama gibi açılır. Her girdiğinde süre ilerler, fotoğraflar akar, müzik çalar ve sana olan sevgim burada kalır. ❤️
-    </div>
+    <button onclick="addInfiniteScene()">Yeni Sürpriz Aç ✨</button>
 
     <h2 class="section-title">🎁 Son Sayfa</h2>
-    <div class="message-box" style="background:linear-gradient(135deg,rgba(255,255,255,.18),rgba(255,255,255,.08));border:2px solid rgba(255,255,255,.25);">
+    <div class="message-box">
       <h2 style="margin-bottom:25px;font-size:2.2rem;">Buraya kadar geldiysen... ❤️</h2>
       <p>
         Bu sayfadaki her şey senin için hazırlandı.
         Her satırda biraz sevgim, her fotoğrafta biraz mutluluğumuz,
-        her efekttе ise seni gülümsetme isteğim var.
-        <br><br>
-        Belki bu sadece küçük bir web sitesi gibi görünüyor olabilir ama
-        aslında burada sana anlatamadığım bir sürü duygu saklı.
+        her efektte ise seni gülümsetme isteğim var.
         <br><br>
         Sen benim hayatımın en güzel tesadüfü değil,
         en güzel gerçeğisin.
-        <br><br>
-        Ne olursa olsun,
-        hangi gün olursa olsun,
-        ben hep seni sevmeye devam edeceğim.
         <br><br>
         İyi ki doğdun güzel kalplim...
         İyi ki varsın Zudem. 🎂❤️
@@ -434,46 +519,68 @@
     </div>
 
     <div class="ending-universe">
-      <div class="ending-stars">✨ 🌌 ✨</div>
       <h1 style="margin-top:25px;font-size:3rem;">Evrenin Sonu</h1>
       <p style="margin-top:25px;line-height:2;font-size:1.2rem;max-width:700px;margin-left:auto;margin-right:auto;">
-        Buraya kadar geldiysen artık şunu biliyorsun:
-        Bu sayfadaki hiçbir şey rastgele yapılmadı.
-        Her efektin içinde biraz heyecan,
-        her mesajın içinde biraz sevgi,
-        her fotoğrafın içinde ise sana ait bir anı var.
+        Bu sadece bir web sitesi gibi görünüyor olabilir.
+        Ama aslında bu, bir insanın başka bir insanı ne kadar çok sevdiğinin dijital hali.
         <br><br>
-        Belki bu sadece bir web sitesi gibi görünüyor...
-        Ama aslında bu,
-        bir insanın başka bir insanı ne kadar çok sevdiğinin dijital hali.
-        <br><br>
-        Ve bu hikayenin sonu yok.
-        Çünkü seni sevmek bitmeyecek. ❤️
+        Ve bu hikayenin sonu yok. Çünkü seni sevmek bitmeyecek. ❤️
       </p>
-      <div style="margin-top:35px;font-size:5rem;animation:heartbeat 1.5s infinite;">💖</div>
+      <div style="margin-top:35px;font-size:5rem;animation:pulse 1.5s infinite;">💖</div>
     </div>
 
-    <div class="footer">
-      Sonsuza kadar sen ve ben 💖
-    </div>
+    <div style="margin-top:70px;padding-bottom:40px;opacity:.95;">Sonsuza kadar sen ve ben 💖</div>
   </div>
 
   <script>
     const correctPassword = "1301";
-    let slideIndex = 0;
+    let score = 0;
+    let pageNo = 0;
 
     function checkPassword() {
       const entered = document.getElementById("password").value;
       if (entered === correctPassword) {
         document.getElementById("loginScreen").classList.add("hidden");
-        document.getElementById("mainSite").classList.remove("hidden");
-        setTimeout(() => showFloatingNote("Hoş geldin güzel kalplim ❤️"), 900);
-      } else alert("Şifre yanlış ❤️");
+        document.getElementById("journeyScreen").classList.remove("hidden");
+      } else {
+        alert("Şifre yanlış ❤️");
+      }
+    }
+
+    function startJourney() {
+      document.getElementById("journeyScreen").classList.add("hide");
+      document.getElementById("mainSite").classList.remove("hidden");
+      updateLoveTime();
+      setTimeout(() => {
+        showFloatingNote("Hoş geldin Zudem... Seni bekliyordum ❤️");
+        confettiBurst();
+      }, 900);
+    }
+
+    function updateLoveTime() {
+      const startDate = new Date("2026-01-13T00:00:00");
+      const now = new Date();
+      const diff = now - startDate;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+      document.getElementById("daysTogether").innerHTML = `${days} Gün ${hours} Saat ${minutes} Dakika ${seconds} Saniye`;
+    }
+    setInterval(updateLoveTime, 1000);
+
+    function toggleMusic() {
+      const music = document.getElementById("music");
+      if (music.paused) music.play(); else music.pause();
+    }
+
+    function showLetter() {
+      document.getElementById("letterBox").classList.toggle("hidden");
     }
 
     function createHeart() {
       const heart = document.createElement("div");
-      heart.classList.add("heart");
+      heart.className = "heart";
       heart.innerHTML = Math.random() > .5 ? "❤" : "✨";
       heart.style.left = Math.random() * 100 + "vw";
       heart.style.animationDuration = (Math.random() * 3 + 3) + "s";
@@ -481,28 +588,7 @@
       document.body.appendChild(heart);
       setTimeout(() => heart.remove(), 6000);
     }
-    setInterval(createHeart, 300);
-
-    function showLetter() {
-      const box = document.getElementById("letterBox");
-      box.style.display = box.style.display === "block" ? "none" : "block";
-    }
-
-    function surpriseMessage() { randomLoveMessage(); }
-
-    function nextSlide() {
-      const slides = document.querySelectorAll(".slide");
-      if (!slides.length) return;
-      slides[slideIndex].classList.remove("active");
-      slideIndex = (slideIndex + 1) % slides.length;
-      slides[slideIndex].classList.add("active");
-    }
-    setInterval(nextSlide, 3500);
-
-    function toggleMusic() {
-      const music = document.getElementById("music");
-      if (music.paused) music.play(); else music.pause();
-    }
+    setInterval(createHeart, 500);
 
     function showFloatingNote(text) {
       const note = document.createElement("div");
@@ -516,8 +602,6 @@
       const messages = [
         "Sen benim en güzel iyi ki’msin ❤️",
         "Gülüşün kalbimin en sevdiği yer.",
-        "Seninle her gün yeniden başlıyor gibi.",
-        "Benim en güzel duam sensin.",
         "Seni sadece bugün değil, her gün daha çok seviyorum.",
         "Bu site küçük, sana olan sevgim çok büyük.",
         "İyi ki doğdun kalbimin sahibi 🎂"
@@ -528,27 +612,24 @@
     function blowCake() {
       document.getElementById("cake").innerText = "🎉";
       document.getElementById("cakeMsg").innerText = "Dileğin kabul olsun aşkım. İyi ki doğdun ❤️";
-      for (let i=0; i<10; i++) setTimeout(createHeart, i*120);
-      showFloatingNote("Seni sonsuz kere seviyorum ❤️");
+      confettiBurst();
+      randomLoveMessage();
     }
 
     const bookPages = [
       ["Sayfa 1", "Bir gün hayatıma girdin ve ben o günden sonra bazı şeylerin gerçekten kader olduğuna inandım."],
       ["Sayfa 2", "Senin gülüşün benim en karanlık günümde bile ışık gibi geliyor."],
       ["Sayfa 3", "13 Ocak 2026 sadece bir tarih değil; benim kalbimin en güzel başlangıcı."],
-      ["Sayfa 4", "Sen mutlu ol diye elimden gelen her şeyi yapmak istiyorum."],
-      ["Son Sayfa", "Bu kitabın sonu yok çünkü sana olan sevgim bitmeyecek."],
+      ["Son Sayfa", "Bu kitabın sonu yok çünkü sana olan sevgim bitmeyecek."]
     ];
-    let pageNo = 0;
     function nextBookPage() {
       pageNo = (pageNo + 1) % bookPages.length;
       document.getElementById("bookPage").innerHTML = `<h3>${bookPages[pageNo][0]}</h3><p>${bookPages[pageNo][1]}</p>`;
     }
 
-    let score = 0;
     function spawnGameHeart() {
       const area = document.getElementById("gameArea");
-      if (!area) return;
+      if (!area || document.getElementById("mainSite").classList.contains("hidden")) return;
       const h = document.createElement("div");
       h.className = "catch-heart";
       h.innerText = "❤️";
@@ -562,7 +643,7 @@
       area.appendChild(h);
       setTimeout(() => h.remove(), 4000);
     }
-    setInterval(spawnGameHeart, 1200);
+    setInterval(spawnGameHeart, 1400);
 
     function unlockMidnightMessage() {
       const hour = new Date().getHours();
@@ -570,43 +651,16 @@
       if (hour === 0) {
         msg.classList.remove("locked");
         msg.innerText = "Gece yarısı oldu... Herkes uyurken bile kalbim seni seviyor. İyi ki varsın aşkım ❤️";
-      } else {
-        showFloatingNote("Bu mesaj gece 00:00’da açılacak 🔒");
-      }
+      } else showFloatingNote("Bu mesaj gece 00:00’da açılacak 🔒");
     }
 
     function showReason() {
-      const reasons = ["Çünkü gülüşün içimi ısıtıyor.", "Çünkü yanımdayken dünya daha güzel.", "Çünkü sen benim huzurumsun.", "Çünkü en ufak halin bile kalbime dokunuyor.", "Çünkü senin mutluluğun benim mutluluğum.", "Çünkü iyi ki dediğim en güzel kişisin."];
+      const reasons = ["Çünkü gülüşün içimi ısıtıyor.", "Çünkü yanımdayken dünya daha güzel.", "Çünkü sen benim huzurumsun.", "Çünkü senin mutluluğun benim mutluluğum."];
       document.getElementById("reasonText").innerText = reasons[Math.floor(Math.random()*reasons.length)];
     }
 
-    function addInfiniteCard() {
-      const texts = ["Bir gün değil, her gün iyi ki sen.", "Seni anlatmaya kelimeler yetmez ama ben yine de deniyorum.", "Bu sayfa sana her baktığında seni seven bir kalp olduğunu hatırlatsın.", "Sen benim en güzel tesadüfüm değil, en güzel kaderimsin.", "Kalbimin en güvenli yeri senin adınla başlıyor."];
-      const card = document.createElement("div");
-      card.className = "infinite-card";
-      card.innerText = texts[Math.floor(Math.random()*texts.length)] + " ❤️";
-      document.getElementById("infiniteLove").appendChild(card);
-    }
-
-    document.addEventListener("mousemove", (e) => {
-      const t = document.createElement("div");
-      t.className = "trail";
-      t.innerText = Math.random() > .5 ? "✨" : "💖";
-      t.style.left = e.clientX + "px";
-      t.style.top = e.clientY + "px";
-      document.body.appendChild(t);
-      setTimeout(() => t.remove(), 1000);
-    });
-
-    function autoNightMode() {
-      const h = new Date().getHours();
-      if (h >= 20 || h < 6) document.body.style.background = "radial-gradient(circle at top,#3b1d5f,#12002f 70%)";
-    }
-    autoNightMode();
-
     function addAiMessage(sender, text) {
       const chat = document.getElementById("aiChat");
-      if (!chat) return;
       const msg = document.createElement("div");
       msg.style.margin = "10px 0";
       msg.style.padding = "12px 15px";
@@ -629,59 +683,22 @@
       addAiMessage("Sen", question);
       input.value = "";
       addAiMessage("Zudem AI", "yazıyor...");
-
       setTimeout(() => {
-        const chat = document.getElementById("aiChat");
-        chat.lastChild.remove();
+        document.getElementById("aiChat").lastChild.remove();
         addAiMessage("Zudem AI", getAiAnswer(question));
       }, 900);
     }
 
     function getAiAnswer(q) {
       q = q.toLowerCase();
-      const answers = {
-        sad: [
-          "Bugün mutsuzsan biraz daha fazla sevilmeyi hak ediyorsun. Fırat burada olsaydı önce seni sakinleştirir, sonra gülümsetmeye çalışırdı. ❤️",
-          "Kötü hissettiğin anlarda bile şunu unutma: Sen çok değerlisin ve Fırat’ın kalbinde çok özel bir yerdesin. 🫶"
-        ],
-        happy: [
-          "Mutlu olman Fırat’ın en sevdiği şey olabilir. Çünkü sen gülünce bu site bile daha güzel parlıyor. ✨",
-          "Bugün mutluysan, bu mutluluğun hiç eksilmesin. Fırat seni hep böyle görmek ister. ❤️"
-        ],
-        love: [
-          "Fırat seni gülüşün, kalbin, bakışın ve ona hissettirdiğin huzur için seviyor. Ama en çok da sen olduğun için seviyor. ❤️",
-          "Çünkü sen onun hayatındaki en güzel iyi ki’sin. Bu site de bunun kanıtı. 💖",
-          "Fırat için sen sadece sevgilisi değil; huzuru, mutluluğu ve en özel yerisin."
-        ],
-        message: [
-          "Zudem, iyi ki doğdun. Senin varlığın Fırat’ın hayatına renk, kalbine huzur, günlerine anlam katıyor. ❤️",
-          "Bugün senin günün ama Fırat için her gün biraz seninle güzel. İyi ki varsın güzel kalplim. 🎂",
-          "Bir insanın hayatına ışık gibi doğmak diye bir şey varsa, sen Fırat’ın hayatına tam olarak öyle doğdun. ✨"
-        ],
-        today: [
-          "Bugün sana söylenecek en doğru şey şu: Çok seviliyorsun, çok değerlisin ve bu site senin için hazırlandı. ❤️",
-          "Bugün gülmen gereken gün. Çünkü birinin kalbinde en güzel yerde duruyorsun. 🫶",
-          "Bugün sadece doğum günün değil, Fırat’ın hayatındaki en güzel insanı kutlama günü. 🎉"
-        ],
-        default: [
-          "Bence bunun cevabı kalpte saklı: Fırat seni çok seviyor ve bunu hissetmen için bu küçük evreni kurdu. ❤️",
-          "Bu sorunun cevabı ne olursa olsun, sonunda aynı yere çıkıyor: Sen Fırat için çok özelsin. 💖",
-          "Zudem AI diyor ki: gülümse, çünkü bu sayfadaki her detay senin için yapıldı. ✨"
-        ]
-      };
-      let pool = answers.default;
-      if (q.includes("mutsuz") || q.includes("üzgün") || q.includes("kötü") || q.includes("ağla")) pool = answers.sad;
-      else if (q.includes("mutlu") || q.includes("güzel") || q.includes("iyi")) pool = answers.happy;
-      else if (q.includes("neden") || q.includes("seviyor") || q.includes("aşk")) pool = answers.love;
-      else if (q.includes("mesaj") || q.includes("yaz")) pool = answers.message;
-      else if (q.includes("bugün") || q.includes("doğum") || q.includes("gün")) pool = answers.today;
-      return pool[Math.floor(Math.random()*pool.length)];
+      if (q.includes("mutsuz") || q.includes("üzgün") || q.includes("kötü")) return "Bugün mutsuzsan biraz daha fazla sevilmeyi hak ediyorsun. Fırat burada olsaydı seni gülümsetmeye çalışırdı. ❤️";
+      if (q.includes("neden") || q.includes("seviyor") || q.includes("aşk")) return "Fırat seni gülüşün, kalbin, bakışın ve ona hissettirdiğin huzur için seviyor. Ama en çok da sen olduğun için seviyor. ❤️";
+      if (q.includes("mesaj") || q.includes("yaz")) return "Zudem, iyi ki doğdun. Senin varlığın Fırat’ın hayatına renk, kalbine huzur, günlerine anlam katıyor. ❤️";
+      return "Bu sorunun cevabı ne olursa olsun, sonunda aynı yere çıkıyor: Sen Fırat için çok özelsin. 💖";
     }
 
-    setTimeout(() => addAiMessage("Zudem AI", "Merhaba güzel kalplim. Bana bir şey sor, Fırat’ın kalbinden cevap vereyim. ❤️"), 1500);
-
     function confettiBurst() {
-      for (let i = 0; i < 80; i++) {
+      for (let i = 0; i < 70; i++) {
         const c = document.createElement("div");
         c.className = "confetti";
         c.style.left = Math.random() * 100 + "vw";
@@ -719,15 +736,8 @@
       loveStars();
     }
 
-    setTimeout(confettiBurst, 7600);
-
     function openGift() {
-      const surprises = [
-        "Bu kutunun içinden çıkan şey: Fırat’ın sana bitmeyen sevgisi. ❤️",
-        "Sürpriz: Bugün gülümsemek zorundasın çünkü çok seviliyorsun. 🎁",
-        "Kutunun içinde küçük bir not var: İyi ki doğdun güzel kalplim. 🎂",
-        "Bu hediyenin adı: Seninle kurulmuş en güzel hayaller. 💖"
-      ];
+      const surprises = ["Bu kutunun içinden çıkan şey: Fırat’ın sana bitmeyen sevgisi. ❤️", "Bugün gülümsemek zorundasın çünkü çok seviliyorsun. 🎁", "İyi ki doğdun güzel kalplim. 🎂"];
       document.getElementById("giftText").innerText = surprises[Math.floor(Math.random()*surprises.length)];
       confettiBurst();
     }
@@ -736,77 +746,51 @@
     function endCall() { document.getElementById("callScreen").classList.remove("show"); }
 
     function parallelUniverse() {
-      const texts = [
-        "Başka bir evrende bile seni seçerdim. 🪐",
-        "Zaman değişse, dünya değişse, kalbim yine seni bulurdu. ✨",
-        "Bütün ihtimallerin sonunda yine sen varsın. ❤️"
-      ];
+      const texts = ["Başka bir evrende bile seni seçerdim. 🪐", "Zaman değişse, dünya değişse, kalbim yine seni bulurdu. ✨", "Bütün ihtimallerin sonunda yine sen varsın. ❤️"];
       document.getElementById("portalText").innerText = texts[Math.floor(Math.random()*texts.length)];
       loveStars();
     }
 
     function setMood(mood) {
-      document.body.classList.remove("vhs-mode");
+      document.body.style.filter = "none";
       if (mood === "romantic") document.body.style.background = "radial-gradient(circle at top,#ffafbd,#ffc3a0 35%,#2b1055 100%)";
       if (mood === "calm") document.body.style.background = "radial-gradient(circle at top,#3b1d5f,#12002f 70%)";
       if (mood === "fun") { document.body.style.background = "linear-gradient(135deg,#ff758c,#ff7eb3,#ffd166)"; confettiBurst(); }
-      if (mood === "retro") { document.body.style.background = "linear-gradient(135deg,#1f1c2c,#928dab)"; document.body.classList.add("vhs-mode"); }
+      if (mood === "retro") { document.body.style.background = "linear-gradient(135deg,#1f1c2c,#928dab)"; document.body.style.filter = "contrast(1.1) saturate(.85)"; }
       showFloatingNote("Ruh hali değişti ✨");
     }
 
     function futureVision() {
-      const scenes = [
-        "5 yıl sonra bir kahve masasında karşılıklı oturuyorsunuz. Fırat yine sana bakıp içinden ‘iyi ki’ diyor. ☕❤️",
-        "Bir gün uzun bir yolculukta cam kenarında sen varsın, yanında Fırat. Yol değil, yanındaki insan güzel geliyor. 🌍",
-        "Gelecekte küçük bir ev, sıcak bir ışık ve içinde sizin kahkahalarınız var. 🏡",
-        "Bir gün geçmişe bakıp ‘biz ne güzel başarmışız’ diyeceğiniz bir an var. 💍"
-      ];
+      const scenes = ["5 yıl sonra bir kahve masasında karşılıklı oturuyorsunuz. Fırat yine sana bakıp içinden ‘iyi ki’ diyor. ☕❤️", "Bir gün uzun bir yolculukta cam kenarında sen varsın, yanında Fırat. 🌍", "Gelecekte küçük bir ev, sıcak bir ışık ve içinde sizin kahkahalarınız var. 🏡"];
       document.getElementById("futureVisionText").innerText = scenes[Math.floor(Math.random()*scenes.length)];
     }
 
     function noMeetStory() {
-      const stories = [
-        "Eğer seninle tanışmasaydım, hayatım devam ederdi belki ama bazı şarkılar eksik, bazı günler renksiz kalırdı.",
-        "Seni tanımasaydım gülüşünün bir insanın gününü nasıl güzelleştirdiğini bilemezdim.",
-        "Eğer yollarımız kesişmeseydi, kalbim en güzel yerini hiç bulamamış olurdu.",
-        "Tanışmasaydık bile, sanki kader bir şekilde bizi yine aynı cümlede buluştururdu."
-      ];
+      const stories = ["Eğer seninle tanışmasaydım, hayatım devam ederdi belki ama bazı şarkılar eksik kalırdı.", "Seni tanımasaydım gülüşünün bir insanın gününü nasıl güzelleştirdiğini bilemezdim.", "Tanışmasaydık bile, sanki kader bir şekilde bizi yine aynı cümlede buluştururdu."];
       document.getElementById("noMeetText").innerText = stories[Math.floor(Math.random()*stories.length)] + " ❤️";
     }
 
     function addInfiniteScene() {
-      const scenes = [
-        "Yeni sahne: Zudem gülümsüyor, Fırat’ın dünyası bir anda güzelleşiyor.",
-        "Yeni sahne: Bir mesaj geliyor ve kalp yine aynı isme gidiyor.",
-        "Yeni sahne: Gece oluyor ama sevgi uyumuyor.",
-        "Yeni sahne: Bir fotoğraf açılıyor, anılar yeniden canlanıyor.",
-        "Yeni sahne: Hikaye bitmiyor çünkü siz hâlâ yazıyorsunuz."
-      ];
+      const scenes = ["Yeni sahne: Zudem gülümsüyor, Fırat’ın dünyası güzelleşiyor.", "Yeni sahne: Gece oluyor ama sevgi uyumuyor.", "Yeni sahne: Hikaye bitmiyor çünkü siz hâlâ yazıyorsunuz."];
       const card = document.createElement("div");
-      card.className = "infinite-card";
+      card.className = "message-box";
       card.innerText = scenes[Math.floor(Math.random()*scenes.length)] + " 🎬";
       document.getElementById("infiniteLove").appendChild(card);
     }
 
-    function startJourney() {
-      document.getElementById("journeyScreen").classList.add("hide");
-      setTimeout(() => {
-        showFloatingNote("Hoş geldin Zudem... Seni bekliyordum ❤️");
-        confettiBurst();
-      }, 1200);
-    }
-
-    window.addEventListener("scroll", () => {
-      const scrolled = window.scrollY + window.innerHeight;
-      const full = document.body.scrollHeight;
-      if (scrolled > full - 250) {
-        document.body.style.transition = "3s";
-        document.body.style.filter = "brightness(.9)";
-      }
+    document.addEventListener("mousemove", (e) => {
+      if (window.innerWidth < 700) return;
+      const t = document.createElement("div");
+      t.className = "trail";
+      t.innerText = Math.random() > .5 ? "✨" : "💖";
+      t.style.left = e.clientX + "px";
+      t.style.top = e.clientY + "px";
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 1000);
     });
 
     document.addEventListener("click", (e) => {
-      if (e.target.closest("button") || e.target.closest("input")) return;
+      if (e.target.closest("button") || e.target.closest("input") || e.target.closest("video")) return;
       const spark = document.createElement("div");
       spark.className = "touch-spark";
       spark.innerText = Math.random() > .5 ? "✨" : "❤️";
@@ -815,27 +799,11 @@
       document.body.appendChild(spark);
       setTimeout(() => spark.remove(), 1500);
     });
+
+    setTimeout(() => {
+      const chat = document.getElementById("aiChat");
+      if (chat) addAiMessage("Zudem AI", "Merhaba güzel kalplim. Bana bir şey sor, Fırat’ın kalbinden cevap vereyim. ❤️");
+    }, 1500);
   </script>
-
-  <audio id="music" autoplay loop>
-    <source src="muzik.mp3" type="audio/mpeg">
-  </audio>
-
-  <div id="countdown" style="position:fixed;top:15px;right:15px;background:rgba(255,255,255,0.15);padding:15px 20px;border-radius:20px;font-weight:bold;backdrop-filter:blur(10px);z-index:999;">
-    ❤️ Birlikte geçen gün: <span id="daysTogether"></span>
-  </div>
-
-  <script>
-    const startDate = new Date("2026-01-13");
-    const today = new Date();
-    const diffTime = today - startDate;
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    document.getElementById("daysTogether").innerText = diffDays;
-
-    document.addEventListener("click", () => {
-      document.getElementById("music").play();
-    });
-  </script>
-
 </body>
 </html>
